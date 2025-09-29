@@ -18,6 +18,7 @@ import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Sales')
 @Controller('admin/sales')
@@ -30,15 +31,17 @@ export class AdminSalesController {
   @ApiOperation({ summary: 'Create a new sale (Admin)' })
   @ApiResponse({ status: 201, description: 'Sale created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createSaleDto: CreateSaleDto) {
-    return this.salesService.create(createSaleDto);
+  async create(@Body() createSaleDto: CreateSaleDto) {
+    const result = await this.salesService.create(createSaleDto);
+    return ApiResponseData.ok(result, 'Sale created successfully');
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all sales (Admin)' })
   @ApiResponse({ status: 200, description: 'Sales retrieved successfully' })
-  findAll() {
-    return this.salesService.findAll();
+  async findAll() {
+    const result = await this.salesService.findAll();
+    return ApiResponseData.ok(result, 'Sales retrieved successfully');
   }
 
   @Get('stats')
@@ -47,8 +50,12 @@ export class AdminSalesController {
     status: 200,
     description: 'Sales statistics retrieved successfully',
   })
-  getSaleStats() {
-    return this.salesService.getSaleStats();
+  async getSaleStats() {
+    const result = await this.salesService.getSaleStats();
+    return ApiResponseData.ok(
+      result,
+      'Sales statistics retrieved successfully',
+    );
   }
 
   @Get('update-status')
@@ -57,31 +64,35 @@ export class AdminSalesController {
     status: 200,
     description: 'Sales status updated successfully',
   })
-  updateSaleStatus() {
-    return this.salesService.updateSaleStatus();
+  async updateSaleStatus() {
+    const result = await this.salesService.updateSaleStatus();
+    return ApiResponseData.ok(result, 'Sales status updated successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a sale by ID (Admin)' })
   @ApiResponse({ status: 200, description: 'Sale retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Sale not found' })
-  findOne(@Param('id') id: string) {
-    return this.salesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.salesService.findOne(id);
+    return ApiResponseData.ok(result, 'Sale retrieved successfully');
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a sale (Admin)' })
   @ApiResponse({ status: 200, description: 'Sale updated successfully' })
   @ApiResponse({ status: 404, description: 'Sale not found' })
-  update(@Param('id') id: string, @Body() updateSaleDto: UpdateSaleDto) {
-    return this.salesService.update(id, updateSaleDto);
+  async update(@Param('id') id: string, @Body() updateSaleDto: UpdateSaleDto) {
+    const result = await this.salesService.update(id, updateSaleDto);
+    return ApiResponseData.ok(result, 'Sale updated successfully');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a sale (Admin)' })
   @ApiResponse({ status: 200, description: 'Sale deleted successfully' })
   @ApiResponse({ status: 404, description: 'Sale not found' })
-  remove(@Param('id') id: string) {
-    return this.salesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.salesService.remove(id);
+    return ApiResponseData.ok(true, 'Sale deleted successfully');
   }
 }

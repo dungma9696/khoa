@@ -50,10 +50,10 @@ export class AdminAuthController {
       },
     },
   })
-  handleLogin(@Request() req) {
-    const user = this.authService.login(req.user);
+  async handleLogin(@Request() req) {
+    const user = await this.authService.login(req.user);
 
-    return ApiResponseData.ok(user);
+    return ApiResponseData.ok(user, 'Login successful');
   }
 
   // @Get('profile')
@@ -110,7 +110,7 @@ export class AdminAuthController {
       changePasswordDto,
     );
 
-    return ApiResponseData.ok(user);
+    return ApiResponseData.ok(user, 'Password changed successfully');
   }
 
   // @Post('forgot-password')

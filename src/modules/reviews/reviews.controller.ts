@@ -20,6 +20,7 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Reviews')
 @Controller('reviews')
@@ -33,25 +34,28 @@ export class ReviewsController {
   @ApiResponse({ status: 201, description: 'Review created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Bad request - already reviewed' })
-  create(
+  async create(
     @Body() createReviewDto: CreateReviewDto,
     @GetUser('id') userId: string,
   ) {
-    return this.reviewsService.create(createReviewDto, userId);
+    const result = await this.reviewsService.create(createReviewDto, userId);
+    return ApiResponseData.ok(result, 'Review created successfully');
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all reviews' })
   @ApiResponse({ status: 200, description: 'Reviews retrieved successfully' })
-  findAll() {
-    return this.reviewsService.findAll();
+  async findAll() {
+    const result = await this.reviewsService.findAll();
+    return ApiResponseData.ok(result, 'Reviews retrieved successfully');
   }
 
   @Get('product/:productId')
   @ApiOperation({ summary: 'Get reviews by product' })
   @ApiResponse({ status: 200, description: 'Reviews retrieved successfully' })
-  findByProduct(@Param('productId') productId: string) {
-    return this.reviewsService.findByProduct(productId);
+  async findByProduct(@Param('productId') productId: string) {
+    const result = await this.reviewsService.findByProduct(productId);
+    return ApiResponseData.ok(result, 'Reviews retrieved successfully');
   }
 
   @Get('product/:productId/rating')
@@ -60,8 +64,9 @@ export class ReviewsController {
     status: 200,
     description: 'Product rating retrieved successfully',
   })
-  getProductRating(@Param('productId') productId: string) {
-    return this.reviewsService.getProductRating(productId);
+  async getProductRating(@Param('productId') productId: string) {
+    const result = await this.reviewsService.getProductRating(productId);
+    return ApiResponseData.ok(result, 'Product rating retrieved successfully');
   }
 
   @Get('my-reviews')
@@ -73,16 +78,18 @@ export class ReviewsController {
     description: 'User reviews retrieved successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  findByUser(@GetUser('id') userId: string) {
-    return this.reviewsService.findByUser(userId);
+  async findByUser(@GetUser('id') userId: string) {
+    const result = await this.reviewsService.findByUser(userId);
+    return ApiResponseData.ok(result, 'User reviews retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a review by ID' })
   @ApiResponse({ status: 200, description: 'Review retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.reviewsService.findOne(id);
+    return ApiResponseData.ok(result, 'Review retrieved successfully');
   }
 
   @Patch(':id')
@@ -92,8 +99,12 @@ export class ReviewsController {
   @ApiResponse({ status: 200, description: 'Review updated successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(id, updateReviewDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+  ) {
+    const result = await this.reviewsService.update(id, updateReviewDto);
+    return ApiResponseData.ok(result, 'Review updated successfully');
   }
 
   @Delete(':id')
@@ -103,7 +114,8 @@ export class ReviewsController {
   @ApiResponse({ status: 200, description: 'Review deleted successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.reviewsService.remove(id);
+    return ApiResponseData.ok(true, 'Review deleted successfully');
   }
 }

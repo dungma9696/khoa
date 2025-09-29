@@ -17,6 +17,7 @@ import {
 import { ReviewsService } from './reviews.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Reviews')
 @Controller('admin/reviews')
@@ -28,47 +29,56 @@ export class AdminReviewsController {
   @Get()
   @ApiOperation({ summary: 'Get all reviews (Admin)' })
   @ApiResponse({ status: 200, description: 'Reviews retrieved successfully' })
-  findAll() {
-    return this.reviewsService.findAll();
+  async findAll() {
+    const result = await this.reviewsService.findAll();
+    return ApiResponseData.ok(result, 'Reviews retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a review by ID (Admin)' })
   @ApiResponse({ status: 200, description: 'Review retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.reviewsService.findOne(id);
+    return ApiResponseData.ok(result, 'Review retrieved successfully');
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a review (Admin)' })
   @ApiResponse({ status: 200, description: 'Review updated successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(id, updateReviewDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+  ) {
+    const result = await this.reviewsService.update(id, updateReviewDto);
+    return ApiResponseData.ok(result, 'Review updated successfully');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a review (Admin)' })
   @ApiResponse({ status: 200, description: 'Review deleted successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.reviewsService.remove(id);
+    return ApiResponseData.ok(true, 'Review deleted successfully');
   }
 
   @Patch(':id/approve')
   @ApiOperation({ summary: 'Approve a review (Admin)' })
   @ApiResponse({ status: 200, description: 'Review approved successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  approveReview(@Param('id') id: string) {
-    return this.reviewsService.approveReview(id);
+  async approveReview(@Param('id') id: string) {
+    const result = await this.reviewsService.approveReview(id);
+    return ApiResponseData.ok(result, 'Review approved successfully');
   }
 
   @Patch(':id/reject')
   @ApiOperation({ summary: 'Reject a review (Admin)' })
   @ApiResponse({ status: 200, description: 'Review rejected successfully' })
   @ApiResponse({ status: 404, description: 'Review not found' })
-  rejectReview(@Param('id') id: string) {
-    return this.reviewsService.rejectReview(id);
+  async rejectReview(@Param('id') id: string) {
+    const result = await this.reviewsService.rejectReview(id);
+    return ApiResponseData.ok(result, 'Review rejected successfully');
   }
 }

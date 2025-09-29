@@ -19,6 +19,7 @@ import { AddToCartDto } from './dto/add-to-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Carts')
 @Controller('carts')
@@ -31,8 +32,9 @@ export class CartsController {
   @ApiOperation({ summary: 'Get current user cart' })
   @ApiResponse({ status: 200, description: 'Cart retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getCart(@GetUser('id') userId: string) {
-    return this.cartsService.getCart(userId);
+  async getCart(@GetUser('id') userId: string) {
+    const result = await this.cartsService.getCart(userId);
+    return ApiResponseData.ok(result, 'Cart retrieved successfully');
   }
 
   @Get('total')
@@ -42,16 +44,21 @@ export class CartsController {
     description: 'Cart total retrieved successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getCartTotal(@GetUser('id') userId: string) {
-    return this.cartsService.getCartTotal(userId);
+  async getCartTotal(@GetUser('id') userId: string) {
+    const result = await this.cartsService.getCartTotal(userId);
+    return ApiResponseData.ok(result, 'Cart total retrieved successfully');
   }
 
   @Post('add')
   @ApiOperation({ summary: 'Add item to cart' })
   @ApiResponse({ status: 201, description: 'Item added to cart successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  addToCart(@Body() addToCartDto: AddToCartDto, @GetUser('id') userId: string) {
-    return this.cartsService.addToCart(addToCartDto, userId);
+  async addToCart(
+    @Body() addToCartDto: AddToCartDto,
+    @GetUser('id') userId: string,
+  ) {
+    const result = await this.cartsService.addToCart(addToCartDto, userId);
+    return ApiResponseData.ok(result, 'Item added to cart successfully');
   }
 
   @Patch('update')
@@ -59,11 +66,15 @@ export class CartsController {
   @ApiResponse({ status: 200, description: 'Cart item updated successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
-  updateCartItem(
+  async updateCartItem(
     @Body() updateCartItemDto: UpdateCartItemDto,
     @GetUser('id') userId: string,
   ) {
-    return this.cartsService.updateCartItem(updateCartItemDto, userId);
+    const result = await this.cartsService.updateCartItem(
+      updateCartItemDto,
+      userId,
+    );
+    return ApiResponseData.ok(result, 'Cart item updated successfully');
   }
 
   @Delete('remove/:productId')
@@ -74,24 +85,26 @@ export class CartsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Cart item not found' })
-  removeFromCart(
+  async removeFromCart(
     @Param('productId') productId: string,
     @Body() body: { variant?: string },
     @GetUser('id') userId: string,
   ) {
-    return this.cartsService.removeFromCart(
+    const result = await this.cartsService.removeFromCart(
       productId,
       body.variant || '',
       userId,
     );
+    return ApiResponseData.ok(result, 'Item removed from cart successfully');
   }
 
   @Delete('clear')
   @ApiOperation({ summary: 'Clear cart' })
   @ApiResponse({ status: 200, description: 'Cart cleared successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  clearCart(@GetUser('id') userId: string) {
-    return this.cartsService.clearCart(userId);
+  async clearCart(@GetUser('id') userId: string) {
+    const result = await this.cartsService.clearCart(userId);
+    return ApiResponseData.ok(result, 'Cart cleared successfully');
   }
 
   @Post('convert-to-order')
@@ -102,7 +115,8 @@ export class CartsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Cart is empty' })
-  convertToOrder(@GetUser('id') userId: string) {
-    return this.cartsService.convertToOrder(userId);
+  async convertToOrder(@GetUser('id') userId: string) {
+    const result = await this.cartsService.convertToOrder(userId);
+    return ApiResponseData.ok(result, 'Cart converted to order successfully');
   }
 }

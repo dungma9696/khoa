@@ -18,6 +18,7 @@ import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Discounts')
 @Controller('admin/discounts')
@@ -30,15 +31,17 @@ export class AdminDiscountsController {
   @ApiOperation({ summary: 'Create a new discount (Admin)' })
   @ApiResponse({ status: 201, description: 'Discount created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createDiscountDto: CreateDiscountDto) {
-    return this.discountsService.create(createDiscountDto);
+  async create(@Body() createDiscountDto: CreateDiscountDto) {
+    const result = await this.discountsService.create(createDiscountDto);
+    return ApiResponseData.ok(result, 'Discount created successfully');
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all discounts (Admin)' })
   @ApiResponse({ status: 200, description: 'Discounts retrieved successfully' })
-  findAll() {
-    return this.discountsService.findAll();
+  async findAll() {
+    const result = await this.discountsService.findAll();
+    return ApiResponseData.ok(result, 'Discounts retrieved successfully');
   }
 
   @Get('stats')
@@ -47,8 +50,12 @@ export class AdminDiscountsController {
     status: 200,
     description: 'Discount statistics retrieved successfully',
   })
-  getDiscountStats() {
-    return this.discountsService.getDiscountStats();
+  async getDiscountStats() {
+    const result = await this.discountsService.getDiscountStats();
+    return ApiResponseData.ok(
+      result,
+      'Discount statistics retrieved successfully',
+    );
   }
 
   @Get('update-status')
@@ -57,34 +64,38 @@ export class AdminDiscountsController {
     status: 200,
     description: 'Discount status updated successfully',
   })
-  updateDiscountStatus() {
-    return this.discountsService.updateDiscountStatus();
+  async updateDiscountStatus() {
+    const result = await this.discountsService.updateDiscountStatus();
+    return ApiResponseData.ok(result, 'Discount status updated successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a discount by ID (Admin)' })
   @ApiResponse({ status: 200, description: 'Discount retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Discount not found' })
-  findOne(@Param('id') id: string) {
-    return this.discountsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.discountsService.findOne(id);
+    return ApiResponseData.ok(result, 'Discount retrieved successfully');
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a discount (Admin)' })
   @ApiResponse({ status: 200, description: 'Discount updated successfully' })
   @ApiResponse({ status: 404, description: 'Discount not found' })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateDiscountDto: UpdateDiscountDto,
   ) {
-    return this.discountsService.update(id, updateDiscountDto);
+    const result = await this.discountsService.update(id, updateDiscountDto);
+    return ApiResponseData.ok(result, 'Discount updated successfully');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a discount (Admin)' })
   @ApiResponse({ status: 200, description: 'Discount deleted successfully' })
   @ApiResponse({ status: 404, description: 'Discount not found' })
-  remove(@Param('id') id: string) {
-    return this.discountsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.discountsService.remove(id);
+    return ApiResponseData.ok(true, 'Discount deleted successfully');
   }
 }

@@ -20,6 +20,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Products')
 @Controller('admin/products')
@@ -32,8 +33,9 @@ export class AdminProductsController {
   @ApiOperation({ summary: 'Create a new product (Admin)' })
   @ApiResponse({ status: 201, description: 'Product created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    const result = await this.productsService.create(createProductDto);
+    return ApiResponseData.ok(result, 'Product created successfully');
   }
 
   @Get()
@@ -41,32 +43,39 @@ export class AdminProductsController {
     summary: 'Get all products with pagination and filters (Admin)',
   })
   @ApiResponse({ status: 200, description: 'Products retrieved successfully' })
-  findAll(@Query() findAllProductsDto: FindAllProductsDto) {
-    return this.productsService.findAll(findAllProductsDto);
+  async findAll(@Query() findAllProductsDto: FindAllProductsDto) {
+    const result = await this.productsService.findAll(findAllProductsDto);
+    return ApiResponseData.ok(result, 'Products retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID (Admin)' })
   @ApiResponse({ status: 200, description: 'Product retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.productsService.findOne(id);
+    return ApiResponseData.ok(result, 'Product retrieved successfully');
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a product (Admin)' })
   @ApiResponse({ status: 200, description: 'Product updated successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    const result = await this.productsService.update(id, updateProductDto);
+    return ApiResponseData.ok(result, 'Product updated successfully');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a product (Admin)' })
   @ApiResponse({ status: 200, description: 'Product deleted successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.productsService.remove(id);
+    return ApiResponseData.ok(true, 'Product deleted successfully');
   }
 
   @Patch(':id/stock')
@@ -76,14 +85,15 @@ export class AdminProductsController {
     description: 'Product stock updated successfully',
   })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  updateStock(
+  async updateStock(
     @Param('id') id: string,
     @Body() body: { variant?: string; quantity: number },
   ) {
-    return this.productsService.updateStock(
+    const result = await this.productsService.updateStock(
       id,
       body.variant || '',
       body.quantity,
     );
+    return ApiResponseData.ok(result, 'Product stock updated successfully');
   }
 }

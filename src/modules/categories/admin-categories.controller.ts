@@ -19,6 +19,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Categories')
 @Controller('admin/categories')
@@ -31,8 +32,9 @@ export class AdminCategoriesController {
   @ApiOperation({ summary: 'Create a new category (Admin)' })
   @ApiResponse({ status: 201, description: 'Category created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    const result = await this.categoriesService.create(createCategoryDto);
+    return ApiResponseData.ok(result, 'Category created successfully');
   }
 
   @Get()
@@ -41,34 +43,38 @@ export class AdminCategoriesController {
     status: 200,
     description: 'Categories retrieved successfully',
   })
-  findAll() {
-    return this.categoriesService.findAll();
+  async findAll() {
+    const result = await this.categoriesService.findAll();
+    return ApiResponseData.ok(result, 'Categories retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a category by ID (Admin)' })
   @ApiResponse({ status: 200, description: 'Category retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Category not found' })
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.categoriesService.findOne(id);
+    return ApiResponseData.ok(result, 'Category retrieved successfully');
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a category (Admin)' })
   @ApiResponse({ status: 200, description: 'Category updated successfully' })
   @ApiResponse({ status: 404, description: 'Category not found' })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(id, updateCategoryDto);
+    const result = await this.categoriesService.update(id, updateCategoryDto);
+    return ApiResponseData.ok(result, 'Category updated successfully');
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a category (Admin)' })
   @ApiResponse({ status: 200, description: 'Category deleted successfully' })
   @ApiResponse({ status: 404, description: 'Category not found' })
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.categoriesService.remove(id);
+    return ApiResponseData.ok(true, 'Category deleted successfully');
   }
 }

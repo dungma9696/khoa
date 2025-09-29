@@ -18,6 +18,7 @@ import { SubCategoriesService } from './sub-categories.service';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Admin - Sub-categories')
 @Controller('admin/sub-categories')
@@ -33,8 +34,9 @@ export class AdminSubCategoriesController {
     description: 'Sub-category created successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
-    return this.subCategoriesService.create(createSubCategoryDto);
+  async create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
+    const result = await this.subCategoriesService.create(createSubCategoryDto);
+    return ApiResponseData.ok(result, 'Sub-category created successfully');
   }
 
   @Get()
@@ -43,8 +45,9 @@ export class AdminSubCategoriesController {
     status: 200,
     description: 'Sub-categories retrieved successfully',
   })
-  findAll() {
-    return this.subCategoriesService.findAll();
+  async findAll() {
+    const result = await this.subCategoriesService.findAll();
+    return ApiResponseData.ok(result, 'Sub-categories retrieved successfully');
   }
 
   @Get(':id')
@@ -54,8 +57,9 @@ export class AdminSubCategoriesController {
     description: 'Sub-category retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Sub-category not found' })
-  findOne(@Param('id') id: string) {
-    return this.subCategoriesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.subCategoriesService.findOne(id);
+    return ApiResponseData.ok(result, 'Sub-category retrieved successfully');
   }
 
   @Patch(':id')
@@ -65,11 +69,15 @@ export class AdminSubCategoriesController {
     description: 'Sub-category updated successfully',
   })
   @ApiResponse({ status: 404, description: 'Sub-category not found' })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateSubCategoryDto: UpdateSubCategoryDto,
   ) {
-    return this.subCategoriesService.update(id, updateSubCategoryDto);
+    const result = await this.subCategoriesService.update(
+      id,
+      updateSubCategoryDto,
+    );
+    return ApiResponseData.ok(result, 'Sub-category updated successfully');
   }
 
   @Delete(':id')
@@ -79,7 +87,8 @@ export class AdminSubCategoriesController {
     description: 'Sub-category deleted successfully',
   })
   @ApiResponse({ status: 404, description: 'Sub-category not found' })
-  remove(@Param('id') id: string) {
-    return this.subCategoriesService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.subCategoriesService.remove(id);
+    return ApiResponseData.ok(true, 'Sub-category deleted successfully');
   }
 }

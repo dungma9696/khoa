@@ -20,6 +20,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Products')
 @Controller('products')
@@ -29,22 +30,25 @@ export class ProductsController {
   @Get()
   @ApiOperation({ summary: 'Get all products with pagination and filters' })
   @ApiResponse({ status: 200, description: 'Products retrieved successfully' })
-  findAll(@Query() findAllProductsDto: FindAllProductsDto) {
-    return this.productsService.findAll(findAllProductsDto);
+  async findAll(@Query() findAllProductsDto: FindAllProductsDto) {
+    const result = await this.productsService.findAll(findAllProductsDto);
+    return ApiResponseData.ok(result, 'Products retrieved successfully');
   }
 
   @Get('category/:categoryId')
   @ApiOperation({ summary: 'Get products by category' })
   @ApiResponse({ status: 200, description: 'Products retrieved successfully' })
-  findByCategory(@Param('categoryId') categoryId: string) {
-    return this.productsService.findByCategory(categoryId);
+  async findByCategory(@Param('categoryId') categoryId: string) {
+    const result = await this.productsService.findByCategory(categoryId);
+    return ApiResponseData.ok(result, 'Products retrieved successfully');
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by ID' })
   @ApiResponse({ status: 200, description: 'Product retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.productsService.findOne(id);
+    return ApiResponseData.ok(result, 'Product retrieved successfully');
   }
 }

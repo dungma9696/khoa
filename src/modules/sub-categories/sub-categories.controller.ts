@@ -19,6 +19,7 @@ import { SubCategoriesService } from './sub-categories.service';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Sub-categories')
 @Controller('sub-categories')
@@ -31,11 +32,14 @@ export class SubCategoriesController {
     status: 200,
     description: 'Sub-categories retrieved successfully',
   })
-  findAll(@Query('category') categoryId?: string) {
+  async findAll(@Query('category') categoryId?: string) {
+    let result;
     if (categoryId) {
-      return this.subCategoriesService.findByCategory(categoryId);
+      result = await this.subCategoriesService.findByCategory(categoryId);
+    } else {
+      result = await this.subCategoriesService.findAll();
     }
-    return this.subCategoriesService.findAll();
+    return ApiResponseData.ok(result, 'Sub-categories retrieved successfully');
   }
 
   @Get(':id')
@@ -45,7 +49,8 @@ export class SubCategoriesController {
     description: 'Sub-category retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Sub-category not found' })
-  findOne(@Param('id') id: string) {
-    return this.subCategoriesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.subCategoriesService.findOne(id);
+    return ApiResponseData.ok(result, 'Sub-category retrieved successfully');
   }
 }

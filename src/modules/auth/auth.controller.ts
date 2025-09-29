@@ -25,6 +25,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
+import { ApiResponseData } from 'src/common/bases/api-response';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -49,8 +50,9 @@ export class AuthController {
       },
     },
   })
-  handleLogin(@Request() req) {
-    return this.authService.login(req.user);
+  async handleLogin(@Request() req) {
+    const result = await this.authService.login(req.user);
+    return ApiResponseData.ok(result, 'Login successful');
   }
 
   @Get('profile')
@@ -62,7 +64,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getProfile(@Request() req) {
-    return req.user;
+    return ApiResponseData.ok(req.user, 'User profile retrieved successfully');
   }
 
   @Post('register')
@@ -70,8 +72,9 @@ export class AuthController {
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  register(@Body() registerDto: CreateAuthDto) {
-    return this.authService.handleRegister(registerDto);
+  async register(@Body() registerDto: CreateAuthDto) {
+    const result = await this.authService.handleRegister(registerDto);
+    return ApiResponseData.ok(result, 'User registered successfully');
   }
 
   @Post('check-code')
@@ -79,8 +82,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Verify activation code' })
   @ApiResponse({ status: 200, description: 'Code verified successfully' })
   @ApiResponse({ status: 400, description: 'Invalid code' })
-  checkCode(@Body() registerDto: CodeAuthDto) {
-    return this.authService.checkCode(registerDto);
+  async checkCode(@Body() registerDto: CodeAuthDto) {
+    const result = await this.authService.checkCode(registerDto);
+    return ApiResponseData.ok(result, 'Code verified successfully');
   }
 
   @Post('resend-email')
@@ -88,8 +92,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Resend activation email' })
   @ApiResponse({ status: 200, description: 'Email sent successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  resendEmail(@Body() resendEmailDto: ResendEmailDto) {
-    return this.authService.resendEmail(resendEmailDto);
+  async resendEmail(@Body() resendEmailDto: ResendEmailDto) {
+    const result = await this.authService.resendEmail(resendEmailDto);
+    return ApiResponseData.ok(result, 'Email sent successfully');
   }
 
   @Put('change-password')
@@ -98,8 +103,15 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  changePassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
-    return this.authService.changePassword(req.user._id, changePasswordDto);
+  async changePassword(
+    @Request() req,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    const result = await this.authService.changePassword(
+      req.user._id,
+      changePasswordDto,
+    );
+    return ApiResponseData.ok(result, 'Password changed successfully');
   }
 
   // @Post('forgot-password')
