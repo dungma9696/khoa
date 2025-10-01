@@ -167,7 +167,7 @@ export class UsersService {
     if (address !== undefined) updateData.address = address as any;
     if (dob !== undefined) updateData.dob = new Date(dob);
     if (gender !== undefined) updateData.gender = gender;
-    if (role !== undefined) updateData.roles = role as any;
+    if (role !== undefined) updateData.role = role as any;
     if (status !== undefined) updateData.status = status;
     if (accountType !== undefined) updateData.accountType = accountType;
 
@@ -212,7 +212,7 @@ export class UsersService {
     if (address !== undefined) updateData.address = address as any;
     if (dob !== undefined) updateData.dob = new Date(dob);
     if (gender !== undefined) updateData.gender = gender;
-    if (role !== undefined) updateData.roles = role as any;
+    if (role !== undefined) updateData.role = role as any;
     if (status !== undefined) updateData.status = status;
     if (accountType !== undefined) updateData.accountType = accountType;
 
