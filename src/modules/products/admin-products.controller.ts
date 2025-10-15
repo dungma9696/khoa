@@ -25,7 +25,7 @@ import { ApiResponseData } from 'src/common/bases/api-response';
 @ApiTags('Admin - Products')
 @Controller('admin/products')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

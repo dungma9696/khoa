@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { Public } from 'src/decorator/customize';
 import {
@@ -15,8 +16,8 @@ import {
   CreateAuthDto,
   ResendEmailDto,
   ChangePasswordDto,
-  ForgotPasswordDto,
 } from './dto/create-auth.dto';
+import { Request as ExpressRequest } from 'express';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   ApiTags,
@@ -33,6 +34,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly mailerService: MailerService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('login')
@@ -63,8 +65,9 @@ export class AuthController {
     description: 'User profile retrieved successfully',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  getProfile(@Request() req) {
-    return ApiResponseData.ok(req.user, 'User profile retrieved successfully');
+  async getProfile(@Request() req: ExpressRequest & { user: { _id: string } }) {
+    const user = await this.usersService.findOne(req.user._id);
+    return ApiResponseData.ok(user, 'User profile retrieved successfully');
   }
 
   @Post('register')

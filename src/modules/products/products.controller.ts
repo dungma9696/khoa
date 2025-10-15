@@ -21,9 +21,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
 import { ApiResponseData } from 'src/common/bases/api-response';
+import { Public } from 'src/decorator/customize';
 
 @ApiTags('Products')
 @Controller('products')
+@Public()
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
