@@ -20,9 +20,11 @@ import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { JwtAuthGuard } from '../auth/passport/jwt-auth.guard';
 import { ApiResponseData } from 'src/common/bases/api-response';
+import { Public } from 'src/decorator/customize';
 
 @ApiTags('Sub-categories')
 @Controller('sub-categories')
+@Public()
 export class SubCategoriesController {
   constructor(private readonly subCategoriesService: SubCategoriesService) {}
 

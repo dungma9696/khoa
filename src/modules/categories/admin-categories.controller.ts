@@ -24,7 +24,7 @@ import { ApiResponseData } from 'src/common/bases/api-response';
 @ApiTags('Admin - Categories')
 @Controller('admin/categories')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class AdminCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

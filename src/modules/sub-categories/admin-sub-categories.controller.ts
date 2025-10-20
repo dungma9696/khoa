@@ -23,7 +23,7 @@ import { ApiResponseData } from 'src/common/bases/api-response';
 @ApiTags('Admin - Sub-categories')
 @Controller('admin/sub-categories')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class AdminSubCategoriesController {
   constructor(private readonly subCategoriesService: SubCategoriesService) {}
 
